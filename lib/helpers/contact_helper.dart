@@ -31,6 +31,30 @@ class ContactHelper {
       });
     }
 
+    Future<Contact> saveContact(Contact contact) async {
+      Database databaseContact = await database;
+      contact.id = await databaseContact.insert(contactTable, contact.toMap());
+      return contact;
+    }
+
+    Future<Contact> getContact(int id) async {
+      Database databaseContact = await database;
+      List<Map> map = await databaseContact.query(contactTable,
+          columns: [
+            idColumn,
+            nameColumn,
+            emailColumn,
+            phoneColumn,
+            imageColumn
+          ],
+          where: "$idColumn = ?",
+          whereArgs: [id]);
+      if (map.length > 0)
+        return Contact.fromMap(map.first);
+      else
+        return null;
+    }
+
     if (_database != null) {
       return _database;
     } else {
